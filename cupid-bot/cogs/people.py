@@ -1,13 +1,14 @@
 """Cog for commands relating to users."""
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from cupid import NotFoundError
-from cupid.annotations import UserAsApp
+from cupid import RelationshipKind
 
 import discord
 from discord.ext.commands import Cog, Context, command
 
+from .. import genders
 from ..config import CONFIG
+from ..converters import GenderConverter, OptionalCupidUser
 
 if TYPE_CHECKING:
     from ..bot import CupidBot
@@ -20,21 +21,8 @@ class People(Cog):
         """Store a reference to the bot."""
         self.bot = bot
 
-    @Cog.listener()
-    async def on_user_update(self, before: discord.User, after: discord.User):
-        """Update a user's information on the website when it changes."""
-        try:
-            user: UserAsApp = await self.bot.app.get_user(after.id)
-        except NotFoundError:
-            return
-        await user.edit(
-            name=after.name,
-            discriminator=after.discriminator,
-            avatar=after.avatar_url.split('?')[0],
-        )
-
     @command(brief='View a profile.', aliases=['p'])
-    async def profile(self, ctx: Context, *, user: Optional[discord.User]):
+    async def profile(self, ctx: Context, *, user: OptionalCupidUser):
         """View a user's profile.
 
         Defaults to your own.
@@ -43,21 +31,41 @@ class People(Cog):
         `[p]profile`
         `[p]p @Artemis`
         """
-        user = user or ctx.author
-        try:
-            user: UserAsApp = await self.bot.app.get_user(user.id)
-        except NotFoundError:
-            await ctx.send(f'User **{user.name}** is not registered.')
-            return
+        user = user or ctx.cupid_user
+        gender = genders.from_cupid(user.gender)
+        lines = [f'{gender.emoji} {gender.name}']
+        for rel in user.accepted_relationships:
+            if rel.kind == RelationshipKind.ADOPTION:
+                if rel.initiator == user:
+                    rel_name = gender.parent
+                else:
+                    rel_name = gender.child
+            else:
+                rel_name = gender.partner
+            rel_to = rel.initiator if rel.other == user else rel.other
+            lines.append(f' - **{rel_name.title()}** of **{rel_to.name}**')
         embed = discord.Embed(
             title=user.name,
             colour=CONFIG.accent_colour_int,
+            description='\n'.join(lines),
         )
-        # TODO: Display user gender.
-        # TODO: Add list of accepted relationships.
         embed.set_thumbnail(url=user.avatar_url)
         await ctx.send(embed=embed)
 
-    # TODO: Command to set gender.
+    @command(brief='Set your gender.')
+    async def gender(self, ctx: Context, *, gender: GenderConverter):
+        """Register your gender with the bot.
+
+        Examples:
+        `[p]gender non-binary`
+        `[p]gender female`
+        `[p]gender m`
+
+        Note: at present, the bot only supports non-binary, female and male.
+        """
+        await ctx.cupid_user.edit(gender=gender)
+        gender = genders.from_cupid(gender)
+        await ctx.send(f'Set your gender to {gender.emoji} {gender.name}.')
+
     # TODO: Command to see relationship graph.
     # TODO: Command to see paginated list of people.
