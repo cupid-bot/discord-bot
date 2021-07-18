@@ -1,5 +1,10 @@
 """Cupid bot entry point."""
-from .bot import CupidBot
+import logging
+
+from . import bot, config
 
 
-CupidBot()
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    config.load()
+    bot.CupidBot()

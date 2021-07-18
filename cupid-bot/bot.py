@@ -39,14 +39,11 @@ class CupidBot(commands.Bot):
         )
         self.cupid = Cupid(CONFIG.cupid_api_url)
         self.add_check(self.global_check)
-        for listener in (
-                self.on_user_update, self.on_message, self.on_command_error):
-            self.add_listener(listener)
         try:
             self.load_extension('jishaku')
         except ImportError:
             pass
-        self.load_extension('cupid.cogs')
+        self.load_extension('cupid-bot.cogs')
         self.run(CONFIG.discord_token)
 
     async def on_ready(self):
@@ -61,22 +58,23 @@ class CupidBot(commands.Bot):
     async def get_or_create_user(self, user: discord.User) -> UserAsApp:
         """Ensure sure that a user is registered."""
         try:
-            user: UserAsApp = await self.app.get_user(user.id)
+            cupid_user: UserAsApp = await self.app.get_user(user.id)
         except NotFoundError:
-            return await self.app.create_user(
+            await self.app.create_user(
                 id=user.id,
                 name=user.name,
-                discord=user.discriminator,
-                avatar_url=user.avatar_url,
+                discriminator=user.discriminator,
+                avatar_url=str(user.avatar.url),
                 gender=Gender.NON_BINARY,
             )
+            return await self.app.get_user(user.id)
         else:
-            await user.edit(
+            await cupid_user.edit(
                 name=user.name,
                 discriminator=user.discriminator,
-                avatar_url=user.avatar_url.split('?')[0],
+                avatar_url=str(user.avatar.url).split('?')[0],
             )
-            return user
+            return cupid_user
 
     async def global_check(self, ctx: commands.Context) -> bool:
         """Register users and ensure commands are used in the right guild."""
@@ -85,15 +83,18 @@ class CupidBot(commands.Bot):
                 f'This bot can only be used in **{CONFIG.guild_name}**.',
             )
         ctx.cupid_user = await self.get_or_create_user(ctx.author)
+        return True
 
-    async def on_user_update(self, ctx: commands.Context):
+    async def on_user_update(self, before: discord.User, after: discord.User):
         """Keep users up to date with the API."""
-        if ctx.author.bot:
+        await super().on_user_update(before, after)
+        if after.bot:
             return
-        await self.get_or_create_user(ctx.author)
+        await self.get_or_create_user(after)
 
     async def on_message(self, message: discord.Message):
         """Send the prefix if the bot is mentioned."""
+        await super().on_message(message)
         me = message.guild.me if message.guild else self.bot.user
         if me in message.mentions:
             await message.channel.send(f'My prefix is `{CONFIG.prefix}`.')

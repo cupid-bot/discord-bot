@@ -1,10 +1,8 @@
 """Discord.py help command."""
-import typing
+from typing import Iterable
 
 import discord
 from discord.ext import commands
-
-from . import config
 
 
 class Help(commands.DefaultHelpCommand):
@@ -26,7 +24,8 @@ class Help(commands.DefaultHelpCommand):
     )
 
     def get_command_signature(
-            self, command: commands.Command,
+            self,
+            command: commands.Command,
             ignore_aliases: bool = False) -> str:
         """Get a command signature, but optionally ignore aliases."""
         if command.aliases and not ignore_aliases:
@@ -36,19 +35,20 @@ class Help(commands.DefaultHelpCommand):
             name = command.name
         if command.parent:
             name = f'{command.full_parent_name} {name}'
-        return f'{self.clean_prefix}{name} {command.signature}'
+        return f'{self.context.clean_prefix}{name} {command.signature}'
 
-    async def send_bot_help(self, cogs: typing.Dict[
-            commands.Cog, typing.Iterable[
-                commands.Command
-            ]], description: str = '', title: str = 'Help'):
+    async def send_bot_help(
+            self,
+            cogs: dict[commands.Cog, Iterable[commands.Command]],
+            description: str = '',
+            title: str = 'Help'):
         """Send help for the entire bot."""
         self.context.help_command_check = True
         e = discord.Embed(
-            title=title, color=config.COL_HELP, description=description,
+            title=title, color=0x40d080, description=description,
         )
         for cog in cogs:
-            if not cog:
+            if (not cog) or type(cog).__name__ == 'Jishaku':
                 continue
             lines = []
             for command in await self.filter_commands(cog.walk_commands()):

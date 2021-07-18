@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b2685d02d0d71692b37e31d73b5c53cf85f1da7968aa0f7bb3efd2e0731cdadd"
+            "sha256": "790df854b0bb32ad5bff9750ea3969b0145b9c9e1fb9b5945a8221f614cf6513"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -84,16 +84,16 @@
             "version": "==4.0.0"
         },
         "cupid": {
-            "git": "https://github.com/cupid-bot/python-wrapper.git",
-            "ref": "d4d01f165ea7e601b12c990ef9eb7ed3ed8c79b2"
+            "git": "https://github.com/cupid-bot/python-wrapper",
+            "ref": "5f4cea704a1401e13ddabe5b45fc54790419d5d0",
+            "version": "0.3.11"
+        },
+        "discord-py": {
+            "git": "https://github.com/rapptz/discord.py.git",
+            "ref": "f14e584304d9d6676c90f8aa59d6e4be23d22a10"
         },
         "discord.py": {
-            "hashes": [
-                "sha256:462cd0fe307aef8b29cbfa8dd613e548ae4b2cb581d46da9ac0d46fb6ea19408",
-                "sha256:c6f64db136de0e18e090f6752ea68bdd4ab0a61b82dfe7acecefa22d6477bb0c"
-            ],
-            "index": "pypi",
-            "version": "==1.7.3"
+            "git": "https://github.com/rapptz/discord.py.git"
         },
         "idna": {
             "hashes": [
@@ -309,12 +309,7 @@
             "version": "==4.0.0"
         },
         "discord.py": {
-            "hashes": [
-                "sha256:462cd0fe307aef8b29cbfa8dd613e548ae4b2cb581d46da9ac0d46fb6ea19408",
-                "sha256:c6f64db136de0e18e090f6752ea68bdd4ab0a61b82dfe7acecefa22d6477bb0c"
-            ],
-            "index": "pypi",
-            "version": "==1.7.3"
+            "git": "https://github.com/rapptz/discord.py.git"
         },
         "flake8": {
             "hashes": [

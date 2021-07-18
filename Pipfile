@@ -4,9 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"discord.py" = "*"
 pydantic = "*"
-cupid = {git = "https://github.com/cupid-bot/python-wrapper.git"}
+cupid = {git = "https://github.com/cupid-bot/python-wrapper", version = "0.3.11"}
+"discord.py" = {git = "https://github.com/rapptz/discord.py.git"}
 
 [dev-packages]
 flake8 = "*"

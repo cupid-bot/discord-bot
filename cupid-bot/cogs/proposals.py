@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from ..bot import CupidBot
 
 
-class People(Cog):
+class Proposals(Cog):
     """Commands relating to relationships."""
 
     def __init__(self, bot: 'CupidBot'):

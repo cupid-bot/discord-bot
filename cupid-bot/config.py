@@ -20,7 +20,7 @@ class _Config(pydantic.BaseModel):
     prefix: str = '?'
     guild_id: int = 839867213196427264
     guild_name: str = 'Polytics'
-    accent_colour: Color = '#ff2fd6'
+    accent_colour: Color = Color('#ff2fd6')
 
     @property
     def accent_colour_int(self) -> int:
@@ -55,7 +55,7 @@ def _get_config_data() -> dict[str, Any]:
     data = normalise_options(os.environ)
     parser = configparser.ConfigParser()
     if parser.read(BASE_PATH / 'config.ini'):
-        data.update(normalise_options(parser['cupid']))
+        data.update(normalise_options(parser['cupid-bot']))
     return data
 
 

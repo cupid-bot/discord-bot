@@ -20,6 +20,11 @@ class GenderData:
     child: str
     partner: str
 
+    def __str__(self) -> str:
+        """Get a human readable title for the gender."""
+        title = self.name[0].upper() + self.name[1:]
+        return f'{self.emoji} {title}'
+
 
 _BASE_EMOJI = '\N{HAPPY PERSON RAISING ONE HAND}'
 _JOINER = '\N{ZERO WIDTH JOINER}'

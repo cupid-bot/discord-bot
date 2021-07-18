@@ -1,5 +1,5 @@
 """Cog for commands relating to users."""
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 from cupid import RelationshipKind
 
@@ -8,7 +8,8 @@ from discord.ext.commands import Cog, Context, command
 
 from .. import genders
 from ..config import CONFIG
-from ..converters import GenderConverter, OptionalCupidUser
+from ..converters import CupidUser, GenderConverter
+from ..pagination import Paginator
 
 if TYPE_CHECKING:
     from ..bot import CupidBot
@@ -22,7 +23,7 @@ class People(Cog):
         self.bot = bot
 
     @command(brief='View a profile.', aliases=['p'])
-    async def profile(self, ctx: Context, *, user: OptionalCupidUser):
+    async def profile(self, ctx: Context, *, user: CupidUser = None):
         """View a user's profile.
 
         Defaults to your own.
@@ -33,7 +34,8 @@ class People(Cog):
         """
         user = user or ctx.cupid_user
         gender = genders.from_cupid(user.gender)
-        lines = [f'{gender.emoji} {gender.name}']
+        # Not using str.title() because we want "Non-binary", not "Non-Binary".
+        lines = [f'**{gender}**']
         for rel in user.accepted_relationships:
             if rel.kind == RelationshipKind.ADOPTION:
                 if rel.initiator == user:
@@ -65,7 +67,26 @@ class People(Cog):
         """
         await ctx.cupid_user.edit(gender=gender)
         gender = genders.from_cupid(gender)
-        await ctx.send(f'Set your gender to {gender.emoji} {gender.name}.')
+        await ctx.send(f'Set your gender to {gender}.')
+
+    @command(brief='See a list of people.', aliases=['people', 'l', 'search'])
+    async def list(self, ctx: Context, *, search: Optional[str] = None):
+        """Get a list of people registered, optionally with a search.
+
+        Examples:
+        `[p]list`
+        `[p]search Rob`
+        """
+        users = self.bot.app.users(search=search)
+        await users.get_page(0)    # Fetch a page to load metadata.
+        await Paginator(
+            ctx=ctx,
+            title='People',
+            page_count=users.total_pages,
+            get_page=users.get_page,
+            formatter=lambda user: (
+                f'{genders.from_cupid(user.gender).emoji} {user.name}'
+            ),
+        ).setup()
 
     # TODO: Command to see relationship graph.
-    # TODO: Command to see paginated list of people.

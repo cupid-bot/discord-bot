@@ -26,6 +26,6 @@ class Meta(commands.Cog):
             description=ctx.bot.description,
             colour=CONFIG.accent_colour_int,
         )
-        embed.set_thumbnail(url=ctx.bot.user.avatar_url)
+        embed.set_thumbnail(url=ctx.bot.user.avatar.url)
         embed.set_footer(text='By Artemis (artemisdev.xyz).')
         await ctx.send(embed=embed)

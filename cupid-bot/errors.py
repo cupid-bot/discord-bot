@@ -5,8 +5,6 @@ import traceback
 import discord
 from discord.ext.commands import Context
 
-from . import config
-
 
 async def on_command_error(ctx: Context, error: Exception):
     """Handle an error."""
@@ -14,7 +12,7 @@ async def on_command_error(ctx: Context, error: Exception):
     raw_title = re.sub('([a-z])([A-Z])', r'\1 \2', raw_title)
     title = raw_title[0].upper() + raw_title[1:].lower()
     e = discord.Embed(
-        colour=config.COL_ERROR, title=title, description=str(error),
+        colour=0xd04040, title=title, description=str(error),
     )
     await ctx.send(embed=e)
     if hasattr(error, 'original'):
