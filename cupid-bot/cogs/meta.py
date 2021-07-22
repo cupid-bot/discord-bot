@@ -17,6 +17,7 @@ class Meta(commands.Cog):
         """Set the help command cog to this one."""
         self.bot = bot
         self.bot.help_command.cog = self
+        self.bot.help_command.command_attrs = {'aliases': ['h']}
 
     @commands.command(brief='About the bot.')
     async def about(self, ctx: commands.Context):

@@ -5,7 +5,7 @@ from typing import Optional
 from cupid import Gender
 from cupid.annotations import UserAsAppWithRelationships
 
-from discord.ext.commands import Context
+from discord.ext import commands
 from discord.ext.commands.converter import MemberConverter
 
 
@@ -15,7 +15,7 @@ class CupidUser(UserAsAppWithRelationships):
     @classmethod
     async def convert(
             cls,
-            ctx: Context,
+            ctx: commands.Context,
             argument: str) -> UserAsAppWithRelationships:
         """Convert a user to a Cupid user."""
         # Allow errors to be raised by member converter.
@@ -29,7 +29,7 @@ class GenderConverter:
     @classmethod
     async def convert(
             cls,
-            ctx: Context,
+            ctx: commands.Context,
             raw_argument: str) -> Optional[Gender]:
         """Convert a raw argument to a user gender."""
         argument = re.sub('[_ -]', '', raw_argument.lower())

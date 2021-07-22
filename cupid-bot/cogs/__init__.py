@@ -3,10 +3,10 @@ from discord.ext import commands
 
 from .meta import Meta
 from .people import People
-from .proposals import Proposals
+from .relationships import Relationships
 
 
-COGS = [Meta, People, Proposals]
+COGS = [Meta, People, Relationships]
 
 
 def setup(bot: commands.Bot):

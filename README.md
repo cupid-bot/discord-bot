@@ -27,6 +27,7 @@ The following options are available:
 |-----------------|------------------------------------|--------------------------------------|
 | `cupid_token`   | *Required*                         | An app token for the Cupid API.      |
 | `discord_token` | *Required*                         | A bot token for Discord.             |
+| `tenor_token`   | *Required*                         | An API token for Tenor.              |
 | `cupid_api_url` | `https://cupid-api.artemisdev.xyz` | The base URL of the Cupid API.       |
 | `prefix`        | `?`                                | The Discord command prefix.          |
 | `guild_id`      | `839867213196427264`               | The ID of the Discord server to use. |

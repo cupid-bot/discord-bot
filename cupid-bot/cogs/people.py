@@ -1,15 +1,18 @@
 """Cog for commands relating to users."""
 from typing import Optional, TYPE_CHECKING
 
-from cupid import RelationshipKind
-
 import discord
-from discord.ext.commands import Cog, Context, command
+from discord.ext.commands import Cog, command
 
-from .. import genders
 from ..config import CONFIG
-from ..converters import CupidUser, GenderConverter
-from ..pagination import Paginator
+from ..utils import Context
+from ..utils.converters import CupidUser, GenderConverter
+from ..utils.pagination import Paginator
+from ..utils.sentences import (
+    gender,
+    get_gender_data,
+    relationship_to,
+)
 
 if TYPE_CHECKING:
     from ..bot import CupidBot
@@ -33,19 +36,9 @@ class People(Cog):
         `[p]p @Artemis`
         """
         user = user or ctx.cupid_user
-        gender = genders.from_cupid(user.gender)
-        # Not using str.title() because we want "Non-binary", not "Non-Binary".
-        lines = [f'**{gender}**']
-        for rel in user.accepted_relationships:
-            if rel.kind == RelationshipKind.ADOPTION:
-                if rel.initiator == user:
-                    rel_name = gender.parent
-                else:
-                    rel_name = gender.child
-            else:
-                rel_name = gender.partner
-            rel_to = rel.initiator if rel.other == user else rel.other
-            lines.append(f' - **{rel_name.title()}** of **{rel_to.name}**')
+        lines = [gender(user)]
+        for relationship in user.accepted_relationships:
+            lines.append(relationship_to(user, relationship))
         embed = discord.Embed(
             title=user.name,
             colour=CONFIG.accent_colour_int,
@@ -55,7 +48,7 @@ class People(Cog):
         await ctx.send(embed=embed)
 
     @command(brief='Set your gender.')
-    async def gender(self, ctx: Context, *, gender: GenderConverter):
+    async def gender(self, ctx: Context, *, new_gender: GenderConverter):
         """Register your gender with the bot.
 
         Examples:
@@ -65,9 +58,9 @@ class People(Cog):
 
         Note: at present, the bot only supports non-binary, female and male.
         """
-        await ctx.cupid_user.edit(gender=gender)
-        gender = genders.from_cupid(gender)
-        await ctx.send(f'Set your gender to {gender}.')
+        await ctx.cupid_user.edit(gender=new_gender)
+        gender_name = gender(ctx.cupid_user)
+        await ctx.send(f'Set your gender to {gender_name}.')
 
     @command(brief='See a list of people.', aliases=['people', 'l', 'search'])
     async def list(self, ctx: Context, *, search: Optional[str] = None):
@@ -85,7 +78,7 @@ class People(Cog):
             page_count=users.total_pages,
             get_page=users.get_page,
             formatter=lambda user: (
-                f'{genders.from_cupid(user.gender).emoji} {user.name}'
+                f'{get_gender_data(user.gender).emoji} {user.name}'
             ),
         ).setup()
 

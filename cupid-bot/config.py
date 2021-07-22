@@ -16,6 +16,7 @@ class _Config(pydantic.BaseModel):
 
     cupid_token: str
     discord_token: str
+    tenor_token: str
     cupid_api_url: str = 'https://cupid-api.artemisdev.xyz'
     prefix: str = '?'
     guild_id: int = 839867213196427264

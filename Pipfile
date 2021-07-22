@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 pydantic = "*"
-cupid = {git = "https://github.com/cupid-bot/python-wrapper", version = "0.3.11"}
+cupid = {git = "https://github.com/cupid-bot/python-wrapper"}
 "discord.py" = {git = "https://github.com/rapptz/discord.py.git"}
 
 [dev-packages]

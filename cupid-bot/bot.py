@@ -1,13 +1,18 @@
 """Subclass of the Discord.py ext.commands bot for the Cupid bot."""
+import typing
+
 from cupid import Cupid, Gender, NotFoundError
-from cupid.annotations import UserAsApp
+from cupid.annotations import UserAsAppWithRelationships
 
 import discord
 from discord.ext import commands
 
-from . import errors
 from .config import CONFIG
-from .helpcmd import Help
+from .utils import errors
+from .utils.helpcmd import Help
+
+if typing.TYPE_CHECKING:
+    from .utils import Context
 
 
 DESCRIPTION = (
@@ -49,16 +54,22 @@ class CupidBot(commands.Bot):
     async def on_ready(self):
         """Create the Cupid App instance."""
         self.app = await self.cupid.app(CONFIG.cupid_token)
+        print(f'Discord: Logged in as {self.user}.')
+        print(f'Cupid API: Logged in as {self.app.name}.')
+        print('----------')
 
     async def close(self):
         """Close the Discord and Cupid clients."""
         await self.cupid.close()
         await super().close()
 
-    async def get_or_create_user(self, user: discord.User) -> UserAsApp:
+    async def get_or_create_user(
+            self, user: discord.User) -> UserAsAppWithRelationships:
         """Ensure sure that a user is registered."""
         try:
-            cupid_user: UserAsApp = await self.app.get_user(user.id)
+            cupid_user: UserAsAppWithRelationships = await self.app.get_user(
+                user.id,
+            )
         except NotFoundError:
             await self.app.create_user(
                 id=user.id,
@@ -76,7 +87,7 @@ class CupidBot(commands.Bot):
             )
             return cupid_user
 
-    async def global_check(self, ctx: commands.Context) -> bool:
+    async def global_check(self, ctx: 'Context') -> bool:
         """Register users and ensure commands are used in the right guild."""
         if (not ctx.guild) or ctx.guild.id != CONFIG.guild_id:
             raise commands.CommandError(
@@ -87,7 +98,6 @@ class CupidBot(commands.Bot):
 
     async def on_user_update(self, before: discord.User, after: discord.User):
         """Keep users up to date with the API."""
-        await super().on_user_update(before, after)
         if after.bot:
             return
         await self.get_or_create_user(after)
@@ -95,10 +105,10 @@ class CupidBot(commands.Bot):
     async def on_message(self, message: discord.Message):
         """Send the prefix if the bot is mentioned."""
         await super().on_message(message)
-        me = message.guild.me if message.guild else self.bot.user
+        me = message.guild.me if message.guild else self.user
         if me in message.mentions:
             await message.channel.send(f'My prefix is `{CONFIG.prefix}`.')
 
-    async def on_command_error(self, ctx: commands.Context, error: Exception):
+    async def on_command_error(self, ctx: 'Context', error: Exception):
         """Handle an error."""
         await errors.on_command_error(ctx, error)

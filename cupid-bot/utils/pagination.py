@@ -50,6 +50,8 @@ class Paginator(View):
 class PaginatorButton(Button[Paginator]):
     """A button for moving a paginator forwards or backwards."""
 
+    view: Paginator
+
     def __init__(self, delta: int, label: str):
         """Set up the button."""
         super().__init__(style=ButtonStyle.secondary, label=label)

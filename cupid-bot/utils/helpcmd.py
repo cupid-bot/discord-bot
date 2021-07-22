@@ -1,27 +1,40 @@
 """Discord.py help command."""
-from typing import Iterable
+from typing import Any, Iterable
 
 import discord
 from discord.ext import commands
 
 
 class Help(commands.DefaultHelpCommand):
-    """The help command."""
+    """Get help on the bot, a command or a command group.
 
-    brief = 'Shows this message.'
-    help = (
-        'Get help on the bot, a command or a command group, eg. '
-        '`[p]help`, `[p]help about` or `[p]help Meta` '
-        '\n__Understanding command usage:__\n'
-        '`[value]`: optional value\n'
-        '`<value>`: required value\n'
-        '`[value...]` or `[value]...`: multiple values\n'
-        '`[value="default"]`: default value available.'
-        '\n__Values:__\n'
-        'A value can be anything without a space in it, eg. `text`, '
-        '`@user`, `#channel`, `3`, `no`. If you want text with a space '
-        'in it, do `"some text"`.'
-    )
+    **__Understanding command usage:__**
+    `[value]`: optional value
+    `<value>`: required value
+    `[value...]` or `[value]...`: multiple values
+    `[value="default"]`: default value available.
+
+    **__Values:__**
+    A value can be anything without a space in it, eg. `text`,
+    `@user`, `#channel`, `3`, `no`. If you want text with a space
+    in it, do `"some text"`.
+
+    **__Examples:__**
+    `[p]help`
+    `[p]help about`
+    `[p]help Meta`
+    """
+
+    context: commands.Context
+
+    def __init__(self, **options: Any):
+        """Set up the help command."""
+        options['command_attrs'] = {
+            'aliases': ['h'],
+            'help': self.__doc__,
+            'brief': 'Shows this message.',
+        }
+        super().__init__(**options)
 
     def get_command_signature(
             self,
@@ -43,7 +56,6 @@ class Help(commands.DefaultHelpCommand):
             description: str = '',
             title: str = 'Help'):
         """Send help for the entire bot."""
-        self.context.help_command_check = True
         e = discord.Embed(
             title=title, color=0x40d080, description=description,
         )
@@ -57,7 +69,7 @@ class Help(commands.DefaultHelpCommand):
                 signature = self.get_command_signature(
                     command, ignore_aliases=True,
                 )
-                brief = command.brief or Help.brief
+                brief = command.brief or '???'
                 line = f'**{signature}** *{brief}*'
                 if line not in lines:     # Known bug where commands with
                     lines.append(line)    # aliases are duplicated.
@@ -68,10 +80,7 @@ class Help(commands.DefaultHelpCommand):
 
     async def send_command_help(self, command: commands.Command):
         """Send help for a specific command."""
-        if command.name == 'help':
-            desc = Help.help
-        else:
-            desc = command.help
+        desc = command.help or 'No description available.'
         desc = desc.replace('[p]', self.context.prefix)
         title = self.get_command_signature(command)
         e = discord.Embed(title=title, color=0x50C878, description=desc)
@@ -83,8 +92,10 @@ class Help(commands.DefaultHelpCommand):
 
     async def send_group_help(self, group: commands.Group):
         """Send help for a command group."""
+        desc = group.help or 'No description available.'
+        desc = desc.replace('[p]', self.context.prefix)
         await self.send_bot_help(
             {group: group.commands},
-            description=group.help.replace('[p]', self.context.prefix),
+            description=desc,
             title=self.get_command_signature(group),
         )
