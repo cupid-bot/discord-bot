@@ -7,6 +7,7 @@ from discord.ext.commands import Cog, command
 from ..config import CONFIG
 from ..utils import Context
 from ..utils.converters import CupidUser, GenderConverter
+from ..utils.graph import render_graph
 from ..utils.pagination import Paginator
 from ..utils.sentences import (
     gender,
@@ -81,5 +82,16 @@ class People(Cog):
                 f'{get_gender_data(user.gender).emoji} {user.name}'
             ),
         ).setup()
+
+    @command(brief='See a family tree.')
+    async def tree(self, ctx: Context):
+        """See a family tree with every person.
+
+        Examples:
+        `[p]tree`
+        """
+        graph = await self.bot.app.graph()
+        file = render_graph(graph)
+        await ctx.send(file=discord.File(file, filename='tree.png'))
 
     # TODO: Command to see relationship graph.

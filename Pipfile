@@ -7,6 +7,7 @@ name = "pypi"
 pydantic = "*"
 cupid = {git = "https://github.com/cupid-bot/python-wrapper"}
 "discord.py" = {git = "https://github.com/rapptz/discord.py.git"}
+graphviz = "*"
 
 [dev-packages]
 flake8 = "*"
