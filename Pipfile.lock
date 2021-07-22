@@ -85,11 +85,11 @@
         },
         "cupid": {
             "git": "https://github.com/cupid-bot/python-wrapper",
-            "ref": "05ed72676e638930e5e7ac7dae8b65ced9f6c050"
+            "ref": "d1e1b403fa3d6fdfdeb4b56e7ce8a3afbb44b890"
         },
         "discord-py": {
             "git": "https://github.com/rapptz/discord.py.git",
-            "ref": "23852404ed86a98e0b83130662368386e76236c9"
+            "ref": "fc51736b34df3c37c06781ae948b18efb71616fa"
         },
         "discord.py": {
             "git": "https://github.com/rapptz/discord.py.git"
