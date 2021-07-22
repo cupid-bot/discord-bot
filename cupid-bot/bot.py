@@ -46,7 +46,7 @@ class CupidBot(commands.Bot):
         self.add_check(self.global_check)
         try:
             self.load_extension('jishaku')
-        except ImportError:
+        except commands.ExtensionNotFound:
             pass
         self.load_extension('cupid-bot.cogs')
         self.run(CONFIG.discord_token)
