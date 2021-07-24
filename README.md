@@ -7,13 +7,21 @@ This is the Discord Bot interface to the Cupid API.
 Dependencies:
 
 - [Python 3.9+](https://www.python.org/downloads/) (Python 3.x where x >= 9)
-- [Pipenv](https://pypi.org/project/pipenv/) (`python3 -m pip install pipenv`)
+- [Poetry](https://python-poetry.org/docs/master/#installation)
+
+  Click the link for installation instructions, or:
+
+  **\*nix:**
+  `curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -`
+
+  **Windows Powershell:**
+  `(Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py -UseBasicParsing).Content | python -`
 
 Once you have these dependencies installed:
 
-1. **Create a virtual environment:** `python3 -m pipenv shell`
-2. **Install dependencies:** `pipenv install`
-3. **Optionally, install development dependencies:** `pipenv install -d`
+1. **Create a virtual environment:** `python3 -m poetry shell`
+2. **Install dependencies:** `poetry install --no-dev`
+   (remove `--no-dev` for development dependencies)
 
 ## Configuration
 
@@ -38,5 +46,9 @@ The following options are available:
 
 The following commands are available:
 
-- **Run the bot:** `pipenv run bot`
-- **Lint code (requires dev dependecies):** `pipenv run lint`
+- **Run the bot:** `poe bot`
+- **Lint code (requires dev dependecies):** `poe lint`
+
+Note that if to run outside of the Poetry shell (without running
+`poetry shell`) you may have to replace `poe` with `poetry run poe` or even
+`python3 -m poetry run poe`.

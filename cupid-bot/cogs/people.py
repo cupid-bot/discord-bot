@@ -93,5 +93,3 @@ class People(Cog):
         graph = await self.bot.app.graph()
         file = render_graph(graph)
         await ctx.send(file=discord.File(file, filename='tree.png'))
-
-    # TODO: Command to see relationship graph.
