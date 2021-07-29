@@ -84,12 +84,19 @@ class People(Cog):
         ).setup()
 
     @command(brief='See a family tree.')
-    async def tree(self, ctx: Context):
+    async def tree(self, ctx: Context, user: CupidUser = None):
         """See a family tree with every person.
+
+        Optionally, filter by user to only see people related (even indirectly)
+        to that user.
 
         Examples:
         `[p]tree`
+        `[p]tree @Artemis`
         """
-        graph = await self.bot.app.graph()
+        if user:
+            graph = await user.graph()
+        else:
+            graph = await self.bot.app.graph()
         file = render_graph(graph)
         await ctx.send(file=discord.File(file, filename='tree.png'))

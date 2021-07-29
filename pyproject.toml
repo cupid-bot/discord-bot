@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cupid-bot"
-version = "1.0.0"
+version = "1.1.0a0"
 description = "A Discord bot interface to the Cupid API."
 authors = ["Artemis21 <artemisdev21@gmail.com>"]
 
