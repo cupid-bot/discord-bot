@@ -18,7 +18,7 @@ def plot_edges(graph: graphviz.Graph, relationships: list[Relationship]):
     for relationship in relationships:
         graph.edge(str(relationship.initiator.id), str(relationship.other.id))
         if relationship.kind == RelationshipKind.MARRIAGE:
-            subgraph = graphviz.Graph()
+            subgraph = graphviz.Graph(edge_attr={'color': '#eb459e'})
             subgraph.attr(rank='same')
             subgraph.node(str(relationship.initiator.id))
             subgraph.node(str(relationship.other.id))
