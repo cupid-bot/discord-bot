@@ -16,9 +16,13 @@ def plot_nodes(graph: graphviz.Graph, users: dict[int, User]):
 def plot_edges(graph: graphviz.Graph, relationships: list[Relationship]):
     """Add an edge between each related user to the graph."""
     for relationship in relationships:
-        graph.edge(str(relationship.initiator.id), str(relationship.other.id))
+        graph.edge(
+            str(relationship.initiator.id),
+            str(relationship.other.id),
+            color='#eb459e' if relationship.kind == RelationshipKind.MARRIAGE else '#404eed',
+        )
         if relationship.kind == RelationshipKind.MARRIAGE:
-            subgraph = graphviz.Graph(edge_attr={'color': '#eb459e'})
+            subgraph = graphviz.Graph()
             subgraph.attr(rank='same')
             subgraph.node(str(relationship.initiator.id))
             subgraph.node(str(relationship.other.id))
@@ -38,7 +42,6 @@ def render_graph(data: Graph) -> io.BytesIO:
             'fontname': 'Roboto,Helvetica,sans-serif',
         },
         edge_attr={
-            'color': '#404eed',
             'penwidth': '5',
         },
     )
