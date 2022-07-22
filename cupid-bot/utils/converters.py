@@ -2,11 +2,13 @@
 import re
 from typing import Optional
 
+import cupid
 from cupid import Gender
 from cupid.annotations import UserAsAppWithRelationships
 
 from discord.ext import commands
 from discord.ext.commands.converter import MemberConverter
+from discord.ext.commands.errors import BadArgument
 
 
 class CupidUser(UserAsAppWithRelationships):
@@ -18,9 +20,16 @@ class CupidUser(UserAsAppWithRelationships):
             ctx: commands.Context,
             argument: str) -> UserAsAppWithRelationships:
         """Convert a user to a Cupid user."""
-        # Allow errors to be raised by member converter.
-        member = await MemberConverter().convert(ctx, argument)
-        return await ctx.bot.get_or_create_user(member)
+        try:
+            member = await MemberConverter().convert(ctx, argument)
+            return await ctx.bot.get_or_create_user(member)
+        except BadArgument:
+            try:
+                id = int(argument.strip())
+                return await ctx.bot.app.get_user(id)
+            except (ValueError, cupid.NotFoundError):
+                pass
+            raise
 
 
 class GenderConverter:
