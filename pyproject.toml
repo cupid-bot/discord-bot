@@ -8,7 +8,7 @@ authors = ["Artemis21 <artemisdev21@gmail.com>"]
 python = "^3.9"
 pydantic = "^1.8.2"
 graphviz = "^0.17"
-"discord.py" = { git = "https://github.com/rapptz/discord.py.git" }
+"discord.py" = { git = "https://github.com/rapptz/discord.py.git", rev = "13251da8ce7a5567005338d7e617cb667596512d" }
 cupid = { git = "https://github.com/cupid-bot/python-wrapper.git", branch = "main" }
 
 [tool.poetry.dev-dependencies]
@@ -31,7 +31,7 @@ flake8-raise = "^0.0.5"
 flake8-mutable = "^1.2.0"
 mypy-extensions = "^0.4.3"
 poethepoet = "^0.10.0"
-jishaku = "^2.1.0"
+jishaku = "~2.2.0"
 
 [tool.poe.tasks]
 bot = "python3 -m cupid-bot"
