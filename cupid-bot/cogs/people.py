@@ -46,6 +46,7 @@ class People(Cog):
             description='\n'.join(lines),
         )
         embed.set_thumbnail(url=user.avatar_url)
+        embed.set_footer(text=str(user.id))
         await ctx.send(embed=embed)
 
     @command(brief='Set your gender.')
@@ -79,7 +80,7 @@ class People(Cog):
             page_count=users.total_pages,
             get_page=users.get_page,
             formatter=lambda user: (
-                f'{get_gender_data(user.gender).emoji} {user.name}'
+                f'{get_gender_data(user.gender).emoji} {user.name} ({user.id})'
             ),
         ).setup()
 
